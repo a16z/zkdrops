@@ -15,7 +15,7 @@ The smart contract for distributions (`./contracts/PrivateAirdrop.sol`) includes
 - Users can then redeem with a zero-knoweldge proof that they belong in the Merkle tree without revealing which `commitment` is associated with their public key.
 - Note that on-chain verification requires ~350k gas.
 
-![zk proof diagram](https://github.com/a16z/zkp-merkle-airdrop-contracts/blob/master/merkle_proof.jpg?raw=true)
+![zk proof diagram](https://github.com/a16z/zkp-merkle-airdrop-contracts/blob/main/merkle_proof.jpg?raw=true)
 
 ## Related Work and Credits
 - [Tornado.cash](https://tornado.cash/): the methods, tools, and concepts come from a simplified version of the original tornado cash protocol. Much of the circuit is lifted directly.
