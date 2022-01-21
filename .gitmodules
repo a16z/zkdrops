@@ -1,0 +1,3 @@
+[submodule "zkp-merkle-airdrop-lib"]
+	path = zkp-merkle-airdrop-lib
+	url = https://github.com/a16z/zkp-merkle-airdrop-lib
