@@ -20,6 +20,8 @@ contract PrivateAirdrop is Ownable {
 
     mapping(bytes32 => bool) public nullifierSpent;
 
+    uint256 constant SNARK_FIELD = 21888242871839275222246405745257275088548364400416034343698204186575808495617;
+
     constructor(
         IERC20 _airdropToken,
         uint _amountPerRedemption,
@@ -34,6 +36,7 @@ contract PrivateAirdrop is Ownable {
 
     /// @notice verifies the proof, collects the airdrop if valid, and prevents this proof from working again.
     function collectAirdrop(bytes calldata proof, bytes32 nullifierHash) public {
+        require(uint256(nullifierHash) < SNARK_FIELD ,"Nullifier is not within the field");
         require(!nullifierSpent[nullifierHash], "Airdrop already redeemed");
 
         uint[] memory pubSignals = new uint[](3);

@@ -47,6 +47,7 @@ describe("PrivateAirdrop", async () => {
 
         // Collect
         let keyHash = toHex(pedersenHash(key))
+
         let execute = await (
             await airdrop.connect(redeemer).collectAirdrop(callData, keyHash)).wait()
         expect(execute.status).to.be.eq(1)
@@ -54,6 +55,45 @@ describe("PrivateAirdrop", async () => {
         expect(contractBalanceUpdated.toNumber()).to.be.eq(contractBalanceInit.toNumber() - NUM_ERC20_PER_REDEMPTION)
         let redeemerBalance: BigNumber = await erc20.balanceOf(redeemer.address);
         expect(redeemerBalance.toNumber()).to.be.eq(NUM_ERC20_PER_REDEMPTION)
+
+    })
+
+    it("cannot exploit using public inputs larger than the scalar field", async () => {
+        // Deploy contracts
+        let hexRoot = toHex(merkleTreeAndSource.merkleTree.root.val)
+        let [universalOwnerSigner, erc20SupplyHolder, redeemer] = await ethers.getSigners();
+        let {erc20, verifier, airdrop} = 
+            await deployContracts(
+                universalOwnerSigner, 
+                erc20SupplyHolder.address, 
+                hexRoot);
+
+        // Transfer airdroppable tokens to contract
+        await erc20.connect(erc20SupplyHolder).transfer(airdrop.address, NUM_ERC20_TO_DISTRIBUTE);
+        let contractBalanceInit: BigNumber = await erc20.balanceOf(airdrop.address);
+        expect(contractBalanceInit.toNumber()).to.be.eq(NUM_ERC20_TO_DISTRIBUTE);
+
+        let merkleTree = merkleTreeAndSource.merkleTree; 
+
+        // Generate proof
+        let leafIndex = 7;
+        let key = merkleTreeAndSource.leafNullifiers[leafIndex];
+        let secret = merkleTreeAndSource.leafSecrets[leafIndex];
+        let callData = await generateProofCallData(merkleTree, key, secret, redeemer.address, WASM_BUFF, ZKEY_BUFF);
+
+        // Collect
+        let keyHash = toHex(pedersenHash(key))
+	let keyHashTwo = toHex(BigInt(keyHash) + BigInt('21888242871839275222246405745257275088548364400416034343698204186575808495617'))
+
+        let execute = await (
+            await airdrop.connect(redeemer).collectAirdrop(callData, keyHash)).wait()
+        expect(execute.status).to.be.eq(1)
+        let contractBalanceUpdated: BigNumber = await erc20.balanceOf(airdrop.address);
+        expect(contractBalanceUpdated.toNumber()).to.be.eq(contractBalanceInit.toNumber() - NUM_ERC20_PER_REDEMPTION)
+        let redeemerBalance: BigNumber = await erc20.balanceOf(redeemer.address);
+        expect(redeemerBalance.toNumber()).to.be.eq(NUM_ERC20_PER_REDEMPTION)
+        await expect(airdrop.connect(redeemer).collectAirdrop(callData, keyHashTwo)).to.be.revertedWith("Nullifier is not within the field")
+
     })
 
     it("cannot be front-run by another party", async () => {
