@@ -108,4 +108,4 @@ template Withdraw(levels) {
     recipientSquare <== recipient * recipient;
 }
 
-component main {public [root, nullifierHash, recipient]} = Withdraw(13); // This value correpsponds to width of tree (2^x)
+component main {public [root, nullifierHash, recipient]} = Withdraw(13); // This value  corresponds to width of tree (2^x)
