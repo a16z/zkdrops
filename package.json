@@ -2,8 +2,8 @@
 	"private": true,
 	"author": "sragss",
 	"workspaces": [
-		"contracts",
-		"lib",
+		"zkdrops-contracts",
+		"zkdrops-lib",
 		"client-ex"
 	],
 	"scripts": {
