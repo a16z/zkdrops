@@ -16,7 +16,7 @@
     "typescript": "^4.5.4"
   },
   "dependencies": {
-    "circomlibjs": "0.0.8",
-    "snarkjs": "0.4.10"
+    "circomlibjs": "0.1.7",
+    "snarkjs": "0.5.0"
   }
 }
