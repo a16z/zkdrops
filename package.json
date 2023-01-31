@@ -1,0 +1,15 @@
+{
+	"private": true,
+	"author": "sragss",
+	"workspaces": [
+		"contracts",
+		"lib",
+		"client-ex"
+	],
+	"scripts": {
+		"compile": "cd zkdrops-contracts && npx hardhat compile",
+		"start-backend": "cd contracts && npx hardhat node",
+		"deploy": "cd contracts && npx hardhat run --network localhost ./scripts/deploy.ts",
+		"start-client": "cd client-ex && npm run dev"
+	}	
+}

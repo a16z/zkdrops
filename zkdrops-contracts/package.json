@@ -1,0 +1,33 @@
+{
+  "name": "zkdrops-contracts",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "ts-mocha"
+  },
+  "author": "sragss",
+  "license": "ISC",
+  "dependencies": {
+    "@nomiclabs/hardhat-ethers": "^2.0.2",
+    "@nomiclabs/hardhat-waffle": "^2.0.1",
+    "@openzeppelin/contracts": "^4.4.2",
+    "@typechain/ethers-v5": "^7.2.0",
+    "@typechain/hardhat": "^2.3.1",
+    "@types/chai": "^4.2.22",
+    "@types/expect": "^24.3.0",
+    "@types/mocha": "^9.0.0",
+    "@types/node": "^16.11.0",
+    "chai": "^4.3.4",
+    "circomlib": "^2.0.0",
+    "circomlibjs": "^0.0.8",
+    "ethereum-waffle": "^3.4.0",
+    "hardhat": "^2.6.6",
+    "hardhat-gas-reporter": "^1.0.4",
+    "snarkjs": "^0.4.10",
+    "ts-mocha": "^8.0.0",
+    "ts-node": "^10.4.0",
+    "typescript": "^4.4.4",
+    "zkdrops-lib": "1.0.3"
+  }
+}

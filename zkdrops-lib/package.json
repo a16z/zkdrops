@@ -1,0 +1,22 @@
+{
+  "name": "zkdrops-lib",
+  "version": "1.0.3",
+  "description": "Library for interacting with the zk merkle tree.",
+  "main": "lib/index.js",
+  "scripts": {
+    "build": "tsc"
+  },
+  "author": "sragss",
+  "types": "lib/index.d.ts",
+  "prepare": "npm run build",
+  "files": [
+    "/lib"
+  ],
+  "devDependencies": {
+    "typescript": "^4.5.4"
+  },
+  "dependencies": {
+    "circomlibjs": "0.0.8",
+    "snarkjs": "0.4.10"
+  }
+}

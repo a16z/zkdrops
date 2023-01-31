@@ -1,0 +1,20 @@
+{
+    "compilerOptions": {
+      "target": "ES6",
+      "allowJs": true,
+      "module": "commonjs",
+      "strict": true,
+      "esModuleInterop": true,
+      "resolveJsonModule": true,
+      "moduleResolution": "Node",
+      "allowSyntheticDefaultImports": true,
+      "lib": [
+        "es2019"
+      ]
+    },
+    "include": ["./scripts", "./test", "./typechain", "./local"],
+    "exclude": [
+        "node_modules/**"
+    ],
+    "files": ["./hardhat.config.ts"]
+  }
