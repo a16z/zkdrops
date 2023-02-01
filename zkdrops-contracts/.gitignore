@@ -3,3 +3,4 @@ typechain
 artifacts
 cache
 local
+typechain-types

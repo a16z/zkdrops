@@ -1,7 +1,7 @@
 import * as crypto from "crypto";
 import { readFileSync, writeFileSync } from 'fs';
 
-import { MerkleTree, pedersenHashConcat, toHex } from 'zkp-merkle-airdrop-lib';
+import { MerkleTree, pedersenHashConcat, toHex } from 'zkdrops-lib';
 
 /** MerkleTree and inputs used to derive. */
 export interface MerkleTreeAndSource {

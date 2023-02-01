@@ -1,12 +1,12 @@
 import { expect } from "chai";
 import { ethers, waffle } from "hardhat";
-import { PlonkVerifier, PrivateAirdrop } from "../typechain"
+import { PlonkVerifier, PlonkVerifier__factory, PrivateAirdrop, PrivateAirdrop__factory } from "../typechain-types"
 import { abi as ERC20_ABI, bytecode as ERC20_BYTECODE } from "@openzeppelin/contracts/build/contracts/ERC20PresetFixedSupply.json";
 import { Contract } from "@ethersproject/contracts";
 import { Signer } from "@ethersproject/abstract-signer";
 import { BigNumber } from "@ethersproject/bignumber";
 import { readFileSync } from "fs";
-import { MerkleTree, generateProofCallData, pedersenHashConcat, pedersenHash, toHex } from "zkp-merkle-airdrop-lib";
+import { MerkleTree, generateProofCallData, pedersenHashConcat, pedersenHash, toHex } from "zkdrops-lib";
 import { randomBigInt, readMerkleTreeAndSourceFromFile } from "../utils/TestUtils";
 
 // Test constants
@@ -204,10 +204,10 @@ async function deployContracts(
                 BigNumber.from(ERC20_SUPPLY),
                 erc20SupplyHolder
             ])
-        let plonkFactory = await ethers.getContractFactory("PlonkVerifier", ownerSigner)
+        let plonkFactory = new PlonkVerifier__factory(ownerSigner)
         let verifier = await plonkFactory.deploy()
 
-        let airdropFactory = await ethers.getContractFactory("PrivateAirdrop", ownerSigner)
+        let airdropFactory = new PrivateAirdrop__factory(ownerSigner)
         let airdrop: PrivateAirdrop = (
             await airdropFactory.deploy(
                 erc20.address,

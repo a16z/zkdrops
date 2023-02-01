@@ -1,5 +1,5 @@
 import { expect } from "chai"
-import { MerkleTree } from "zkp-merkle-airdrop-lib";
+import { MerkleTree } from "zkdrops-lib";
 import { generateMerkleTreeAndKeys } from "../utils/TestUtils";
 
 describe("MerkleTree", () => {

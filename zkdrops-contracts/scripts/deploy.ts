@@ -1,9 +1,9 @@
 import { ethers, waffle } from "hardhat";
 import { abi as ERC20_ABI, bytecode as ERC20_BYTECODE } from "@openzeppelin/contracts/build/contracts/ERC20PresetFixedSupply.json";
 import { BigNumber } from "@ethersproject/bignumber";
-import { PrivateAirdrop } from "../typechain";
+import { PrivateAirdrop } from "../typechain-types";
 import { readMerkleTreeAndSourceFromFile } from "../utils/TestUtils";
-import { toHex } from "zkp-merkle-airdrop-lib";
+import { toHex } from "zkdrops-lib";
 
 
 /**

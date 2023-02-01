@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "ts-mocha"
+    "test": "npx hardhat test"
   },
   "author": "sragss",
   "license": "ISC",
