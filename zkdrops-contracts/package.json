@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "npx hardhat test"
+    "test": "yarn hardhat test",
+    "build": "./build_scripts/build_all.sh && yarn hardhat compile"
   },
   "author": "sragss",
   "license": "ISC",
@@ -20,7 +21,7 @@
     "@types/node": "^18.11.18",
     "chai": "^4.3.4",
     "circomlib": "^2.0.0",
-    "circomlibjs": "^0.1.7",
+    "circomlibjs": "0.1.7",
     "ethereum-waffle": "^4.0.9",
     "hardhat": "^2.6.6",
     "hardhat-gas-reporter": "^1.0.4",

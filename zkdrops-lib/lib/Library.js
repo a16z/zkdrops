@@ -14,7 +14,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     function verb(n) { return function (v) { return step([n, v]); }; }
     function step(op) {
         if (f) throw new TypeError("Generator is already executing.");
-        while (_) try {
+        while (g && (g = 0, op[0] && (_ = 0)), _) try {
             if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
             if (y = 0, t) op = [op[0] & 2, t.value];
             switch (op[0]) {
@@ -36,33 +36,27 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.toHex = exports.pedersenHashConcat = exports.pedersenHash = exports.mimcSponge = exports.generateProofCallData = void 0;
+exports.toHex = exports.generateProofCallData = void 0;
 /**
  * Library which abstracts away much of the details required to interact with the private airdrop contract.
  */
 var snarkjs = require("snarkjs");
-var circomlibjs = require('circomlibjs');
-var wc = require("./witness_calculator.js");
+var Poseidon_1 = require("./Poseidon");
 function generateProofCallData(merkleTree, key, secret, receiverAddr, circuitWasmBuffer, zkeyBuffer) {
     return __awaiter(this, void 0, void 0, function () {
-        var inputs, witnessCalculator, witnessBuffer, _a, proof, publicSignals, proofProcessed, pubProcessed, allSolCallData, solCallDataProof;
+        var inputs, _a, proof, publicSignals, proofProcessed, pubProcessed, allSolCallData, solCallDataProof;
         return __generator(this, function (_b) {
             switch (_b.label) {
-                case 0:
-                    inputs = generateCircuitInputJson(merkleTree, key, secret, BigInt(receiverAddr));
-                    return [4 /*yield*/, wc(circuitWasmBuffer)];
+                case 0: return [4 /*yield*/, generateCircuitInputJson(merkleTree, key, secret, BigInt(receiverAddr))];
                 case 1:
-                    witnessCalculator = _b.sent();
-                    return [4 /*yield*/, witnessCalculator.calculateWTNSBin(inputs, 0)];
+                    inputs = _b.sent();
+                    return [4 /*yield*/, snarkjs.plonk.fullProve(inputs, circuitWasmBuffer, zkeyBuffer)];
                 case 2:
-                    witnessBuffer = _b.sent();
-                    return [4 /*yield*/, snarkjs.plonk.prove(zkeyBuffer, witnessBuffer)];
-                case 3:
                     _a = _b.sent(), proof = _a.proof, publicSignals = _a.publicSignals;
                     proofProcessed = unstringifyBigInts(proof);
                     pubProcessed = unstringifyBigInts(publicSignals);
                     return [4 /*yield*/, snarkjs.plonk.exportSolidityCallData(proofProcessed, pubProcessed)];
-                case 4:
+                case 3:
                     allSolCallData = _b.sent();
                     solCallDataProof = allSolCallData.split(',')[0];
                     return [2 /*return*/, solCallDataProof];
@@ -71,21 +65,6 @@ function generateProofCallData(merkleTree, key, secret, receiverAddr, circuitWas
     });
 }
 exports.generateProofCallData = generateProofCallData;
-function mimcSponge(l, r) {
-    return circomlibjs.mimcsponge.multiHash([l, r]);
-}
-exports.mimcSponge = mimcSponge;
-function pedersenHash(nullifier) {
-    return pedersenHashBuff(toBufferLE(nullifier, 31));
-}
-exports.pedersenHash = pedersenHash;
-function pedersenHashConcat(nullifier, secret) {
-    var nullBuff = toBufferLE(nullifier, 31);
-    var secBuff = toBufferLE(secret, 31);
-    var combinedBuffer = Buffer.concat([nullBuff, secBuff]);
-    return pedersenHashBuff(combinedBuffer);
-}
-exports.pedersenHashConcat = pedersenHashConcat;
 function toHex(number, length) {
     if (length === void 0) { length = 32; }
     var str = number.toString(16);
@@ -93,23 +72,30 @@ function toHex(number, length) {
 }
 exports.toHex = toHex;
 function generateCircuitInputJson(mt, nullifier, secret, recieverAddr) {
-    var commitment = pedersenHashConcat(nullifier, secret);
-    var mp = mt.getMerkleProof(commitment);
-    var nullifierHash = pedersenHash(nullifier);
-    var inputObj = {
-        root: mt.root.val,
-        nullifierHash: nullifierHash,
-        nullifier: nullifier,
-        secret: secret,
-        pathIndices: mp.indices,
-        pathElements: mp.vals,
-        recipient: recieverAddr
-    };
-    return inputObj;
-}
-function pedersenHashBuff(buff) {
-    var point = circomlibjs.pedersenHash.hash(buff);
-    return circomlibjs.babyjub.unpackPoint(point)[0];
+    return __awaiter(this, void 0, void 0, function () {
+        var commitment, mp, nullifierHash, inputObj;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, (0, Poseidon_1.poseidon2)(nullifier, secret)];
+                case 1:
+                    commitment = _a.sent();
+                    mp = mt.getMerkleProof(commitment);
+                    return [4 /*yield*/, (0, Poseidon_1.poseidon1)(nullifier)];
+                case 2:
+                    nullifierHash = _a.sent();
+                    inputObj = {
+                        root: mt.root.val,
+                        nullifierHash: nullifierHash,
+                        nullifier: nullifier,
+                        secret: secret,
+                        pathIndices: mp.indices,
+                        pathElements: mp.vals,
+                        recipient: recieverAddr
+                    };
+                    return [2 /*return*/, inputObj];
+            }
+        });
+    });
 }
 // Lifted from ffutils: https://github.com/iden3/ffjavascript/blob/master/src/utils_bigint.js
 function unstringifyBigInts(o) {

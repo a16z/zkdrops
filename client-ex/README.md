@@ -7,7 +7,7 @@ Proof computation takes 20-60s in the browser depending on the machine.
 
 ## Notes
 This example front-end depends on the following locally served files:
-- `mt_8192.txt` – Sample merkle tree from `zkdrops/zkdrops-contracts/test/temp/mt_8192.txt`
+- `mt_8192.txt` – Sample merkle tree from `zkdrops/zkdrops-contracts/test/data/mt_8192.txt`
 - `circuit_final.zkey` – ZKey used by proof generation
 - `circuit.wasm` – Circom wasm used to generate circuit proof by snarkjs
 

@@ -16,7 +16,7 @@ async function main() {
     let NUM_ERC20_TO_DISTRIBUTE = 80_000;
     let NUM_ERC20_PER_REDEMPTION = 10_000;
 
-    let merkleTreeAndSource = readMerkleTreeAndSourceFromFile("./test/temp/mt_keys_8192.csv");
+    let merkleTreeAndSource = await readMerkleTreeAndSourceFromFile("./test/data/mt_keys_8192.csv");
     let merkleTree = merkleTreeAndSource.merkleTree;
 
     let [ownerSigner] = await ethers.getSigners();

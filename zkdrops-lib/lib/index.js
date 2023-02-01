@@ -1,12 +1,14 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.pedersenHashConcat = exports.pedersenHash = exports.mimcSponge = exports.toHex = exports.generateProofCallData = exports.TreeNode = exports.MerkleTree = void 0;
+exports.poseidon2 = exports.poseidon1 = exports.mimcSponge = exports.toHex = exports.generateProofCallData = exports.TreeNode = exports.MerkleTree = void 0;
 var MerkleTree_1 = require("./MerkleTree");
 Object.defineProperty(exports, "MerkleTree", { enumerable: true, get: function () { return MerkleTree_1.MerkleTree; } });
 Object.defineProperty(exports, "TreeNode", { enumerable: true, get: function () { return MerkleTree_1.TreeNode; } });
 var Library_1 = require("./Library");
 Object.defineProperty(exports, "generateProofCallData", { enumerable: true, get: function () { return Library_1.generateProofCallData; } });
 Object.defineProperty(exports, "toHex", { enumerable: true, get: function () { return Library_1.toHex; } });
-Object.defineProperty(exports, "mimcSponge", { enumerable: true, get: function () { return Library_1.mimcSponge; } });
-Object.defineProperty(exports, "pedersenHash", { enumerable: true, get: function () { return Library_1.pedersenHash; } });
-Object.defineProperty(exports, "pedersenHashConcat", { enumerable: true, get: function () { return Library_1.pedersenHashConcat; } });
+var Mimc_1 = require("./Mimc");
+Object.defineProperty(exports, "mimcSponge", { enumerable: true, get: function () { return Mimc_1.mimcSponge; } });
+var Poseidon_1 = require("./Poseidon");
+Object.defineProperty(exports, "poseidon1", { enumerable: true, get: function () { return Poseidon_1.poseidon1; } });
+Object.defineProperty(exports, "poseidon2", { enumerable: true, get: function () { return Poseidon_1.poseidon2; } });

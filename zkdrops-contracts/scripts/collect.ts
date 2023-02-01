@@ -4,7 +4,7 @@ import { BigNumber, Contract } from "ethers";
 import { abi as PRIVATE_AIRDROP_ABI } from "../artifacts/contracts/PrivateAirdrop.sol/PrivateAirdrop.json"
 import { readFileSync } from "fs";
 import { readMerkleTreeAndSourceFromFile } from "../utils/TestUtils";
-import { generateProofCallData, pedersenHash, toHex } from "zkp-merkle-airdrop-lib";
+import { generateProofCallData, poseidon1, toHex } from "zkdrops-lib";
 
 /** Collect an airdrop from the local merkle tree against deployed contract. */
 async function main() {
@@ -16,11 +16,11 @@ async function main() {
 
     let ERC20_ADDR = "";
     let AIRDROP_ADDR = "";
-    let MT_KEYS_PATH = "./test/temp/mt_keys_8192.csv";
+    let MT_KEYS_PATH = "./test/data/mt_keys_8192.csv";
 
     let [collector] = await ethers.getSigners();
 
-    let merkleTreeAndSource = readMerkleTreeAndSourceFromFile(MT_KEYS_PATH);
+    let merkleTreeAndSource = await readMerkleTreeAndSourceFromFile(MT_KEYS_PATH);
     let redeemIndex = 181;
     let key = merkleTreeAndSource.leafNullifiers[redeemIndex];
     let secret = merkleTreeAndSource.leafSecrets[redeemIndex];
@@ -34,7 +34,7 @@ async function main() {
             ZKEY_BUFF);
     console.log("Proof: ", proof);
 
-    let keyHash = toHex(pedersenHash(key));
+    let keyHash = toHex(await poseidon1(key));
 
     let airdropContract = new Contract(AIRDROP_ADDR, PRIVATE_AIRDROP_ABI, collector);
     let tx = await airdropContract.collectAirdrop(proof, keyHash);

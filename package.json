@@ -7,9 +7,10 @@
 		"client-ex"
 	],
 	"scripts": {
-		"compile": "cd zkdrops-contracts && npx hardhat compile",
-		"start-backend": "cd contracts && npx hardhat node",
-		"deploy": "cd contracts && npx hardhat run --network localhost ./scripts/deploy.ts",
-		"start-client": "cd client-ex && npm run dev"
+		"compile": "cd zkdrops-contracts && yarn hardhat compile && cd ../zkdrops-lib && yarn build",
+		"start-backend": "cd zkdrops-contracts && yarn hardhat node",
+		"deploy": "cd zkdrops-contracts && yarn hardhat run --network localhost ./scripts/deploy.ts",
+		"start-client": "cd client-ex && npm run dev",
+		"test": "cd zkdrops-contracts && yarn test"
 	}
 }

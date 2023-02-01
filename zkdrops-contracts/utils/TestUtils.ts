@@ -1,7 +1,7 @@
 import * as crypto from "crypto";
 import { readFileSync, writeFileSync } from 'fs';
 
-import { MerkleTree, pedersenHashConcat, toHex } from 'zkdrops-lib';
+import { MerkleTree, poseidon2, toHex } from 'zkdrops-lib';
 
 /** MerkleTree and inputs used to derive. */
 export interface MerkleTreeAndSource {
@@ -13,16 +13,17 @@ export interface MerkleTreeAndSource {
 /**
  * Generates a Merkle Tree from random leaves of size @param numLeaves.
  */
-export function generateMerkleTreeAndKeys(numLeaves: number): MerkleTreeAndSource {
+export async function generateMerkleTreeAndKeys(numLeaves: number): Promise<MerkleTreeAndSource> {
     let leafNullifiers: BigInt[] = []
     let leafSecrets: BigInt[] = []
     let leaves: BigInt[] = []
     for (let i = 0; i < numLeaves; i++) {
         leafNullifiers.push(randomBigInt(31));
         leafSecrets.push(randomBigInt(31));
-        leaves.push(pedersenHashConcat(leafNullifiers[i], leafSecrets[i]));
+        let commitment = await poseidon2(leafNullifiers[i], leafSecrets[i]);
+        leaves.push(commitment);
     }
-    let merkleTree = MerkleTree.createFromLeaves(leaves);
+    let merkleTree = await MerkleTree.createFromLeaves(leaves);
     return { merkleTree, leafNullifiers, leafSecrets };
 }
 
@@ -39,16 +40,20 @@ export function saveMerkleTreeAndSource(mts: MerkleTreeAndSource, filePrefix: st
             + "\n";
     }
 
-    writeFileSync(`${filePrefix}mt_keys_${mts.leafNullifiers.length}.txt`, csvContent);
+    let keysPath = `${filePrefix}mt_keys_${mts.leafNullifiers.length}.csv`;
+    writeFileSync(keysPath, csvContent);
+    console.log(`Merkle tree keys written to ${keysPath}`)
     saveMerkleTree(mts.merkleTree, filePrefix);
 }
 
 export function saveMerkleTree(mt: MerkleTree, filePrefix: string = "") {
     let storage = mt.getStorageString();
-    writeFileSync(`${filePrefix}mt_${mt.leaves.length}.csv`, storage);
+    let path = `${filePrefix}mt_${mt.leaves.length}.txt`;
+    writeFileSync(path, storage);
+    console.log(`Merkle tree written to ${path}`);
 }
 
-export function readMerkleTreeAndSourceFromFile(filename: string): MerkleTreeAndSource {
+export async function readMerkleTreeAndSourceFromFile(filename: string): Promise<MerkleTreeAndSource> {
     let leafNullifiers: BigInt[] = []
     let leafSecrets: BigInt[] = []
     let leaves: BigInt[] = []
@@ -67,7 +72,7 @@ export function readMerkleTreeAndSourceFromFile(filename: string): MerkleTreeAnd
         leafSecrets.push(BigInt(secret));
         leaves.push(BigInt(commitment));
     }
-    let merkleTree = MerkleTree.createFromLeaves(leaves);
+    let merkleTree = await MerkleTree.createFromLeaves(leaves);
     return { merkleTree, leafNullifiers, leafSecrets };
 }
 

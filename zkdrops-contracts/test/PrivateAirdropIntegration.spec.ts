@@ -1,13 +1,13 @@
 import { expect } from "chai";
-import { ethers, waffle } from "hardhat";
+import { ethers } from "hardhat";
 import { PlonkVerifier, PlonkVerifier__factory, PrivateAirdrop, PrivateAirdrop__factory } from "../typechain-types"
 import { abi as ERC20_ABI, bytecode as ERC20_BYTECODE } from "@openzeppelin/contracts/build/contracts/ERC20PresetFixedSupply.json";
 import { Contract } from "@ethersproject/contracts";
 import { Signer } from "@ethersproject/abstract-signer";
 import { BigNumber } from "@ethersproject/bignumber";
 import { readFileSync } from "fs";
-import { MerkleTree, generateProofCallData, pedersenHashConcat, pedersenHash, toHex } from "zkdrops-lib";
-import { randomBigInt, readMerkleTreeAndSourceFromFile } from "../utils/TestUtils";
+import { MerkleTree, generateProofCallData, poseidon1, poseidon2, toHex } from "zkdrops-lib";
+import { MerkleTreeAndSource, randomBigInt, readMerkleTreeAndSourceFromFile } from "../utils/TestUtils";
 
 // Test constants
 let ERC20_SUPPLY = 100_000;
@@ -19,9 +19,14 @@ let ZKEY_PATH = "./build/circuit_final.zkey";
 
 let WASM_BUFF = readFileSync(WASM_PATH);
 let ZKEY_BUFF = readFileSync(ZKEY_PATH);
+
 describe("PrivateAirdrop", async () => {
     // Load existing Merkle Tree from file to speed tests
-    let merkleTreeAndSource = readMerkleTreeAndSourceFromFile("./test/temp/mt_keys_8192.csv");
+    let merkleTreeAndSource: MerkleTreeAndSource;
+    before(async () => {
+        merkleTreeAndSource = await readMerkleTreeAndSourceFromFile("./test/data/mt_keys_8192.csv");
+    })
+
     it("collects an airdrop, mixed", async () => {
         // Deploy contracts
         let hexRoot = toHex(merkleTreeAndSource.merkleTree.root.val)
@@ -46,7 +51,7 @@ describe("PrivateAirdrop", async () => {
         let callData = await generateProofCallData(merkleTree, key, secret, redeemer.address, WASM_BUFF, ZKEY_BUFF);
 
         // Collect
-        let keyHash = toHex(pedersenHash(key))
+        let keyHash = toHex(await poseidon1(key))
 
         let execute = await (
             await airdrop.connect(redeemer).collectAirdrop(callData, keyHash)).wait()
@@ -82,7 +87,7 @@ describe("PrivateAirdrop", async () => {
         let callData = await generateProofCallData(merkleTree, key, secret, redeemer.address, WASM_BUFF, ZKEY_BUFF);
 
         // Collect
-        let keyHash = toHex(pedersenHash(key))
+        let keyHash = toHex(await poseidon1(key))
 	let keyHashTwo = toHex(BigInt(keyHash) + BigInt('21888242871839275222246405745257275088548364400416034343698204186575808495617'))
 
         let execute = await (
@@ -123,7 +128,7 @@ describe("PrivateAirdrop", async () => {
         let callData = await generateProofCallData(merkleTree, nullifier, secret, redeemer.address, WASM_BUFF, ZKEY_BUFF);
 
         // Check verification through main contract, expecting failure
-        let nullifierHash = toHex(pedersenHash(nullifier))
+        let nullifierHash = toHex(await poseidon1(nullifier))
         await expect(airdrop.connect(frontrunner).collectAirdrop(callData, nullifierHash)).to.be.revertedWith("Proof verification failed")
         let contractBalanceUpdated: BigNumber = await erc20.balanceOf(airdrop.address);
         expect(contractBalanceUpdated.toNumber()).to.be.eq(contractBalanceInit.toNumber())
@@ -161,7 +166,7 @@ describe("PrivateAirdrop", async () => {
         let nullifier = merkleTreeAndSource.leafNullifiers[redeemIndex];
         let secret = merkleTreeAndSource.leafSecrets[redeemIndex];
         let callData = await generateProofCallData(merkleTree, nullifier, secret, redeemer.address, WASM_BUFF, ZKEY_BUFF);
-        let nullifierHash = toHex(pedersenHash(nullifier))
+        let nullifierHash = toHex(await poseidon1(nullifier))
         await expect(airdrop.connect(redeemer).collectAirdrop(callData, nullifierHash))
 
         // Check onlyOwner for addLeaf
@@ -173,10 +178,10 @@ describe("PrivateAirdrop", async () => {
         let newIndex = 555;
         let newNullifier = randomBigInt(31);
         let newSecret = randomBigInt(31);
-        let newCommitment = pedersenHashConcat(newNullifier, newSecret);
+        let newCommitment = await poseidon2(newNullifier, newSecret);
         let newLeaves = merkleTreeAndSource.merkleTree.leaves.map(leaf => leaf.val);
         newLeaves[newIndex] = newCommitment;
-        let newMerkleTree = MerkleTree.createFromLeaves(newLeaves);
+        let newMerkleTree = await MerkleTree.createFromLeaves(newLeaves);
 
         await airdrop.connect(universalOwnerSigner).updateRoot(toHex(newMerkleTree.root.val));
 
@@ -184,7 +189,7 @@ describe("PrivateAirdrop", async () => {
         expect(newMerkleTree.root).to.be.not.eq(initHexRoot);
         let secondProof = 
             await generateProofCallData(newMerkleTree, newNullifier, newSecret, redeemer.address, WASM_BUFF, ZKEY_BUFF);
-        let newNullifierHash = toHex(pedersenHash(newNullifier));
+        let newNullifierHash = toHex(await poseidon1(newNullifier));
         await airdrop.connect(redeemer).collectAirdrop(secondProof, newNullifierHash);
         let redeemerBalance: BigNumber = await erc20.balanceOf(redeemer.address);
         expect(redeemerBalance.toNumber()).to.be.eq(NUM_ERC20_PER_REDEMPTION * 2);
@@ -195,25 +200,18 @@ async function deployContracts(
     ownerSigner: Signer, 
     erc20SupplyHolder: string, 
     root: string): Promise<{erc20: Contract, verifier: PlonkVerifier, airdrop: PrivateAirdrop}> {
-        let erc20 = await waffle.deployContract(
-            ownerSigner,
-            {bytecode: ERC20_BYTECODE, abi: ERC20_ABI}, 
-            [
-                "Zk-airdrop", 
-                "ZkDRP", 
-                BigNumber.from(ERC20_SUPPLY),
-                erc20SupplyHolder
-            ])
+        let erc20Factory = new ethers.ContractFactory(ERC20_ABI, ERC20_BYTECODE, ownerSigner)
+        let erc20 = await erc20Factory.deploy("zk-airdrop", "zkdrop", BigNumber.from(ERC20_SUPPLY), erc20SupplyHolder)
+
         let plonkFactory = new PlonkVerifier__factory(ownerSigner)
         let verifier = await plonkFactory.deploy()
 
         let airdropFactory = new PrivateAirdrop__factory(ownerSigner)
-        let airdrop: PrivateAirdrop = (
-            await airdropFactory.deploy(
+        let airdrop: PrivateAirdrop = await airdropFactory.deploy(
                 erc20.address,
                 BigNumber.from(NUM_ERC20_PER_REDEMPTION),
                 verifier.address, 
                 root
-                )) as PrivateAirdrop
+                )
         return {erc20, verifier, airdrop}
 }

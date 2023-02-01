@@ -1,2 +1,4 @@
 export { MerkleTree, MerkleProof, TreeNode } from './MerkleTree';
-export { generateProofCallData, toHex, mimcSponge, pedersenHash, pedersenHashConcat } from './Library';
+export { generateProofCallData, toHex } from './Library';
+export { mimcSponge } from "./Mimc";
+export { poseidon1, poseidon2 } from "./Poseidon";

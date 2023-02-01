@@ -1,4 +1,5 @@
-import { mimcSponge, toHex } from "./Library";
+import { toHex } from "./Library";
+import { mimcSponge } from "./Mimc";
 
 /** Merkle tree of MimcSponge hashes */
 export class MerkleTree {
@@ -13,19 +14,19 @@ export class MerkleTree {
      * For a set of leaves recursively computes hashes of adjacent nodes upwards until reaching a root. 
      * Note: Significantly slower than `MerkleTree.createFromStorageString` as it rehashes the whole tree.
      */
-    public static createFromLeaves(leaves: BigInt[]): MerkleTree {
+    public static async createFromLeaves(leaves: BigInt[]): Promise<MerkleTree> {
         let leafNodes = leaves.map(leaf => new TreeNode(leaf));
-        let rootNode = MerkleTree.hashChildrenAndLinkToParent(leafNodes)[0];
+        let rootNode = (await MerkleTree.hashChildrenAndLinkToParent(leafNodes))[0];
         return new MerkleTree(rootNode, leafNodes);
     }
 
-    private static hashChildrenAndLinkToParent(levelLeaves: TreeNode[]): TreeNode[] {
+    private static async hashChildrenAndLinkToParent(levelLeaves: TreeNode[]): Promise<TreeNode[]> {
         if (levelLeaves.length == 1) return levelLeaves;
         let parents: TreeNode[] = [];
         for (let i = 0; i < levelLeaves.length; i+= 2) {
             let l = levelLeaves[i];
             let r = levelLeaves[i+1];
-            let hash = mimcSponge(l.val, r.val);
+            let hash = await mimcSponge(l.val, r.val);
             let parent = new TreeNode(hash, l, r);
             parents.push(parent);
             l.parent = parent;
@@ -47,6 +48,7 @@ export class MerkleTree {
      */
     public static createFromStorageString(ss: string): MerkleTree {
         let lines = ss.split("\n");
+
 
         let rootNode = new TreeNode(BigInt(lines[0]));
         let currRow: TreeNode[] = [rootNode];
