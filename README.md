@@ -17,6 +17,16 @@ The smart contract for distributions (`zkdrops-contracts/contracts/PrivateAirdro
 
 ![zk proof diagram](https://github.com/a16z/zkdrops/blob/main/imgs/merkle_proof.jpg?raw=true)
 
+## Client demo
+- Clone and install (directions below)
+- `yarn compile`
+- `yarn start-backend`
+- (new terminal window)
+- `yarn deploy`
+- `yarn start-client`
+- Navigate to `localhost:3000` and point wallet at `localhost:8545`
+- Further details can be found in `zkdrops/client-ex`
+
 ## Related Work and Credits
 - [Tornado.cash](https://tornado.cash/): the methods, tools, and concepts come from a simplified version of the original tornado cash protocol. Much of the circuit is lifted directly.
 - [circom](https://github.com/iden3/circom) for compiling zkSnarks.
