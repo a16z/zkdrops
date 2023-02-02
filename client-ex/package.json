@@ -2,7 +2,7 @@
   "name": "client-ex",
   "version": "1.0.0",
   "scripts": {
-    "dev": "next",
+    "dev": "./cp_script.sh && next",
     "build": "next build",
     "start": "next start"
   },
@@ -13,6 +13,7 @@
     "next": "13.1.6",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "readline": "^1.3.0",
     "zkdrops-lib": "1.0.3"
   },
   "browser": {

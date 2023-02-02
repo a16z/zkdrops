@@ -10,7 +10,7 @@
 		"compile": "cd zkdrops-contracts && yarn hardhat compile && cd ../zkdrops-lib && yarn build",
 		"start-backend": "cd zkdrops-contracts && yarn hardhat node",
 		"deploy": "cd zkdrops-contracts && yarn hardhat run --network localhost ./scripts/deploy.ts",
-		"start-client": "cd client-ex && npm run dev",
+		"start-client": "cd client-ex && yarn dev",
 		"test": "cd zkdrops-contracts && yarn test"
 	}
 }

@@ -49,7 +49,6 @@ export class MerkleTree {
     public static createFromStorageString(ss: string): MerkleTree {
         let lines = ss.split("\n");
 
-
         let rootNode = new TreeNode(BigInt(lines[0]));
         let currRow: TreeNode[] = [rootNode];
         for (let lineIndex = 1; lineIndex < lines.length; lineIndex++) {

@@ -6,7 +6,11 @@ import { readFileSync } from "fs";
 import { readMerkleTreeAndSourceFromFile } from "../utils/TestUtils";
 import { generateProofCallData, poseidon1, toHex } from "zkdrops-lib";
 
-/** Collect an airdrop from the local merkle tree against deployed contract. */
+/** 
+ * Collect an airdrop from the local merkle tree against deployed contract. 
+ * 
+ * npx hardhat run scripts/collect.ts --network localhost
+ */
 async function main() {
     let WASM_PATH = "./build/circuit_js/circuit.wasm";
     let ZKEY_PATH = "./build/circuit_final.zkey";
@@ -14,8 +18,8 @@ async function main() {
     let WASM_BUFF = readFileSync(WASM_PATH);
     let ZKEY_BUFF = readFileSync(ZKEY_PATH);
 
-    let ERC20_ADDR = "";
-    let AIRDROP_ADDR = "";
+    let ERC20_ADDR = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
+    let AIRDROP_ADDR = "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0";
     let MT_KEYS_PATH = "./test/data/mt_keys_8192.csv";
 
     let [collector] = await ethers.getSigners();

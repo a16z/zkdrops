@@ -88,7 +88,7 @@ describe("PrivateAirdrop", async () => {
 
         // Collect
         let keyHash = toHex(await poseidon1(key))
-	let keyHashTwo = toHex(BigInt(keyHash) + BigInt('21888242871839275222246405745257275088548364400416034343698204186575808495617'))
+        let keyHashTwo = toHex(BigInt(keyHash) + BigInt('21888242871839275222246405745257275088548364400416034343698204186575808495617'))
 
         let execute = await (
             await airdrop.connect(redeemer).collectAirdrop(callData, keyHash)).wait()

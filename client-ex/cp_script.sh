@@ -1,0 +1,1 @@
+cp ../zkdrops-contracts/test/data/mt_8192.txt ./public/ && cp ../zkdrops-contracts/build/circuit_final.zkey ./public && cp ../zkdrops-contracts/build/circuit_js/circuit.wasm ./public

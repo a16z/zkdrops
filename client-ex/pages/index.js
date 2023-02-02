@@ -1,4 +1,4 @@
-import { MerkleTree, generateProofCallData, pedersenHashConcat, toHex, pedersenHash } from 'zkp-merkle-airdrop-lib';
+import { MerkleTree, generateProofCallData, poseidon1, poseidon2, toHex } from 'zkdrops-lib';
 import { providers, Contract, ethers, BigNumber } from 'ethers';
 
 import * as AIRDROP_JSON from "../ABIs/PrivateAirdrop.json";
@@ -193,7 +193,7 @@ async function calculateProof(key, secret, state, setState) {
   let address = await signer.getAddress();
 
   // Compute a commitment locally
-  let computedCommitment = toHex(pedersenHashConcat(BigInt(key), BigInt(secret)));
+  let computedCommitment = toHex(await poseidon2(BigInt(key), BigInt(secret)));
 
   // Load files and run proof locally
   let DOMAIN = "http://localhost:3000";
@@ -210,7 +210,9 @@ async function calculateProof(key, secret, state, setState) {
   }
   
   let preTime = new Date().getTime();
-  let proof = await generateProofCallData(mt, BigInt(key), BigInt(secret), address, wasmBuff, zkeyBuff);
+  let biKey = BigInt(key);
+  let biSec = BigInt(secret);
+  let proof = await generateProofCallData(mt, biKey, biSec, address, wasmBuff, zkeyBuff);
   let elapsed =  new Date().getTime() - preTime;
   console.log(`Time to compute proof: ${elapsed}ms`);
 
@@ -231,7 +233,7 @@ async function collectDrop(key, airdropAddr, state, setState) {
   let provider = new providers.Web3Provider(window.ethereum);
   await provider.send("eth_requestAccounts", []);
   let contract = new Contract(airdropAddr, AIRDROP_JSON.abi, provider.getSigner());
-  let keyHash = pedersenHash(BigInt(key));
+  let keyHash = await poseidon1(BigInt(key));
 
   try {
     let tx = await contract.collectAirdrop(state.proof, toHex(keyHash));

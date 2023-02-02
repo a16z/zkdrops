@@ -21,15 +21,8 @@ async function main() {
 
     let [ownerSigner] = await ethers.getSigners();
 
-    let erc20 = await waffle.deployContract(
-        ownerSigner,
-        {bytecode: ERC20_BYTECODE, abi: ERC20_ABI}, 
-        [
-            "Zk-airdrop", 
-            "ZkDRP", 
-            BigNumber.from(ERC20_SUPPLY),
-            ownerSigner.address
-        ])
+    let erc20Factory = new ethers.ContractFactory(ERC20_ABI, ERC20_BYTECODE, ownerSigner);
+    let erc20 = await erc20Factory.deploy("zk-airdrop", "zkdrop", BigNumber.from(ERC20_SUPPLY), ownerSigner.address)
     console.log(`ERC20 address: ${erc20.address}`)
 
     let plonkFactory = await ethers.getContractFactory("PlonkVerifier")
