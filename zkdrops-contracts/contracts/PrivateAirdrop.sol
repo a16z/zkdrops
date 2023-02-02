@@ -2,6 +2,7 @@
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
+
 interface IPlonkVerifier {
     function verifyProof(bytes memory proof, uint[] memory pubSignals) external view returns (bool);
 }
@@ -12,15 +13,14 @@ interface IERC20 {
 
 /// @title An example airdrop contract utilizing a zk-proof of MerkleTree inclusion.
 contract PrivateAirdrop is Ownable {
-    IERC20 public airdropToken;
-    uint public amountPerRedemption;
-    IPlonkVerifier verifier;
-
-    bytes32 public root;
-
-    mapping(bytes32 => bool) public nullifierSpent;
+    IERC20 public immutable airdropToken;
+    IPlonkVerifier immutable verifier;
+    uint public immutable amountPerRedemption;
 
     uint256 constant SNARK_FIELD = 21888242871839275222246405745257275088548364400416034343698204186575808495617;
+
+    bytes32 public root;
+    mapping(bytes32 => bool) public nullifierSpent;
 
     constructor(
         IERC20 _airdropToken,
