@@ -1,5 +1,4 @@
 # zkdrops
-## Purpose
 Distributing an airdrop to users is simple if you already have their public keys, but protocols may want to do so according to off-chain activities. Although one could request addresses from users over a public or private channel, many users would prefer not to disclose their public keys. 
 
 This repo demonstrates a strategy for distributing tokens where users can provide a message (known as the 'commitment') over a public channel and later claim their portion of the airdrop by providing a zero-knowledge proof that they belong in the Merkle tree. Claiming tokens in this manner mixes them with all other users entitled to an airdrop, protecting their anonymity.
