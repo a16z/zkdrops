@@ -3,7 +3,7 @@ Distributing an airdrop to users is simple if you already have their public keys
 
 This repo demonstrates a strategy for distributing tokens where users can provide a message (known as the 'commitment') over a public channel and later claim their portion of the airdrop by providing a zero-knowledge proof that they belong in the Merkle tree. Claiming tokens in this manner mixes them with all other users entitled to an airdrop, protecting their anonymity.
 
-A self-contained library for generating claim proofs and interacting with these contracts can be found at [a16z/zkdrops/zkdrops-lib](https://github.com/a16z/zkdrops/lib), and an example front-end can be found at [a16z/zkdrops/client-ex](https://github.com/a16z/zkdrops/client-ex).
+A self-contained library for generating claim proofs and interacting with these contracts can be found at [a16z/zkdrops/zkdrops-lib](zkdrops-lib/), and an example front-end can be found at [a16z/zkdrops/client-ex](client-ex/).
 
 The smart contract for distributions (`zkdrops-contracts/contracts/PrivateAirdrop.sol`) includes an `updateRoot` function which allows the owner to modify the Merkle tree after launch, but can be made immutable by removing that function if desired.
 
