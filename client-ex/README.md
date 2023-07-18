@@ -1,5 +1,5 @@
 # client-ex: React + NextJS + Webpacking
-Example of computing proofs for the [zkdrops-contracts](https://github.com/a16z/zkdrops/zkdrops-contracts) sample repo in the browser. The majority of the work is done by the [zkdrops-lib](https://github.com/a16z/zkdrops/zkdrops-lib) which in turn uses the work of the iden3 team's Circom libraries. 
+Example of computing proofs for the [zkdrops-contracts](/zkdrops-contracts) sample repo in the browser. The majority of the work is done by the [zkdrops-lib](/zkdrops-lib) which in turn uses the work of the iden3 team's Circom libraries. 
 
 Proof computation takes 20-60s in the browser depending on the machine.
 
