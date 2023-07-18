@@ -1,5 +1,5 @@
 # Zk Merkle Airdrop Library
-Self-contained repo for interacting with the [zkdrops-contracts](https://github.com/a16z/zkdrops/zkdrops-contracts). A browser usage example of this library can be found in [zkdrops/client-ex](https://github.com/a16z/zkdrops/client-ex).
+Self-contained repo for interacting with the [zkdrops-contracts](/zkdrops-contracts). A browser usage example of this library can be found in [zkdrops/client-ex](/client-ex).
 
 ## Usage
 ### Create MerkleTree from file ([ex file](https://github.com/a16z/zkdrops/zkdrops-contracts/blob/master/test/data/mt_8192.txt))
