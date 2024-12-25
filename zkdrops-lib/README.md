@@ -35,7 +35,7 @@ import { MerkleTree, poseidon2, generateProofCallData } from 'zkdrops-lib';
 
 let KEY = "0x00d8d681994b73f635532cc3f0a7e3f02e10d55a6e107e1bd374b1c23bead940";
 let SEC = "0x00b87f2a60e72cc5c6f334833c56aaed80aef550b76bd94837a86070c10dd061";
-let airdropToAddress = "0x0"; // Reciever address -- caller of PrivateAirdrop.collectAirdrop()
+let airdropToAddress = "0x0"; // Receiver address -- caller of PrivateAirdrop.collectAirdrop()
 
 // Optional: Compute commitment
 let commitment: BigInt = poseidon2(BigInt(KEY), BigInt(SEC));
